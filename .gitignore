@@ -131,3 +131,4 @@ dist
 
 config.yaml
 cookie.json
+build/
