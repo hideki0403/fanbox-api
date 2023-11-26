@@ -31,7 +31,7 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
     }
 
     const browser = await puppeteer.launch({
-        headless: config.headless,
+        headless: config.headless === 'false' ? 'new' : false,
         slowMo: 50,
     })
     const page = await browser.newPage()
