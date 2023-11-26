@@ -1,0 +1,6 @@
+pixiv:
+  email: your_email@example.com
+  password: your_password
+
+server:
+  port: 3000
