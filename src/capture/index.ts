@@ -31,7 +31,7 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
     }
 
     const browser = await puppeteer.launch({
-        headless: config.headless === 'false' ? 'new' : false,
+        headless: config.headless === 'true' ? 'new' : false,
         slowMo: 50,
     })
     const page = await browser.newPage()
@@ -43,7 +43,7 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
     }
 
     page.on('request', (request) => {
-        if (['image', 'stylesheet', 'font', 'media'].includes(request.resourceType())) {
+        if (page.url().startsWith('https://www.fanbox.cc') && ['image', 'stylesheet', 'font', 'media'].includes(request.resourceType())) {
             request.abort()
         } else {
             request.continue()

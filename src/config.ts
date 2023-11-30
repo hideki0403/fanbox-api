@@ -13,7 +13,7 @@ const fallbackConfig = {
     server: {
         port: '3000',
     },
-    headless: 'false',
+    headless: 'true',
 }
 
 export default deepmerge(fallbackConfig, config)
