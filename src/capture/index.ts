@@ -1,6 +1,7 @@
 import puppeteer from 'puppeteer'
 import config from '@/config'
 import * as cookie from '@/capture/cookie'
+import * as screenshot from '@/capture/screenshot'
 
 export const ApiType = {
     'relationship': {
@@ -57,20 +58,28 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
         }
     })
 
-    await page.goto(ApiType[type].pageUrl, {
-        waitUntil: ['load', 'networkidle2'],
-    })
-
-    if (!page.url().startsWith('https://www.fanbox.cc')) {
-        await page.type('input[autocomplete="username"]', config.pixiv.email);
-        await page.type('input[autocomplete="current-password"]', config.pixiv.password);
-        await page.click('button[type="submit"]')
-        await page.waitForNavigation({
-            waitUntil: ['load', 'networkidle2'],
-        })
+    try {
         await page.goto(ApiType[type].pageUrl, {
             waitUntil: ['load', 'networkidle2'],
         })
+
+        if (!page.url().startsWith('https://www.fanbox.cc')) {
+            await page.type('input[autocomplete="username"]', config.pixiv.email);
+            await page.type('input[autocomplete="current-password"]', config.pixiv.password);
+            await page.click('button[type="submit"]')
+            await page.waitForNavigation({
+                waitUntil: ['load', 'networkidle2'],
+            })
+            await page.goto(ApiType[type].pageUrl, {
+                waitUntil: ['load', 'networkidle2'],
+            })
+        }
+    } catch (e) {
+        if (config.errorLog === 'true') {
+            screenshot.save(await page.screenshot())
+        }
+        console.error(e)
+        throw e
     }
 
     cookie.save(await page.cookies())
