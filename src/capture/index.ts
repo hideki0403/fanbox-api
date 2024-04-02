@@ -66,7 +66,7 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
         if (!page.url().startsWith('https://www.fanbox.cc')) {
             await page.type('input[autocomplete="username"]', config.pixiv.email);
             await page.type('input[autocomplete="current-password"]', config.pixiv.password);
-            await page.click('button[type="submit"]')
+            await page.click('div+button[type="submit"]')
             await page.waitForNavigation({
                 waitUntil: ['load', 'networkidle2'],
             })
