@@ -79,6 +79,10 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
             screenshot.save(await page.screenshot())
         }
         console.error(e)
+
+        await page.close()
+        await browser.close()
+        
         throw e
     }
 
