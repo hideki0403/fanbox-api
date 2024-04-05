@@ -20,7 +20,7 @@ export default async function () {
 
     app.addHook('onResponse', (req, res) => {
         if (!(req.method === 'GET' || req.method === 'HEAD')) return
-        console.info(`${req.method} ${res.statusCode} ${req.url} (${res.getResponseTime()}ms)`)
+        console.info(`${req.method} ${res.statusCode} ${req.url} (${res.elapsedTime}ms)`)
     })
 
     app.listen({
