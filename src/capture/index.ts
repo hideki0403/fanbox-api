@@ -57,6 +57,15 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
         await page.setCookie(...cookies)
     }
 
+    const cfClearance = cookies?.find((c) => c.name === 'cf_clearance')
+    if (!cfClearance || cfClearance.value !== config.cf_clearance) {
+        await page.setCookie({
+            name: 'cf_clearance',
+            value: config.cf_clearance,
+            domain: '.fanbox.cc',
+        })
+    }
+
     page.on('request', (request) => {
         if (page.url().startsWith('https://www.fanbox.cc') && ['image', 'stylesheet', 'font', 'media'].includes(request.resourceType())) {
             request.abort()
@@ -77,6 +86,7 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
             waitUntil: ['load', 'networkidle2'],
         })
 
+        // ログイン処理
         if (!page.url().startsWith('https://www.fanbox.cc')) {
             await page.type('input[autocomplete~="username"]', config.pixiv.email);
             await page.type('input[autocomplete~="current-password"]', config.pixiv.password);
@@ -87,6 +97,11 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
             await page.goto(ApiType[type].pageUrl, {
                 waitUntil: ['load', 'networkidle2'],
             })
+        }
+
+        // captchaに引っかかったら停止
+        if (await page.$('#challenge-form')) {
+            throw new Error('Captcha detected. Please check your cf_clearance.')
         }
     } catch (e) {
         if (config.errorLog === 'true') {

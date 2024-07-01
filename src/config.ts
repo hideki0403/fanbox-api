@@ -13,6 +13,7 @@ const fallbackConfig = {
     server: {
         port: '3000',
     },
+    cf_clearance: '',
     headless: 'true',
     errorLog: 'false',
 }

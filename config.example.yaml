@@ -2,5 +2,7 @@ pixiv:
   email: your_email@example.com
   password: your_password
 
+cf_clearance: your_cf_clearance_cookie
+
 server:
   port: 3000
