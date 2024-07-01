@@ -103,21 +103,19 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
         if (await page.$('#challenge-form')) {
             throw new Error('Captcha detected. Please check your cf_clearance.')
         }
+
+        cookie.save(await page.cookies())
     } catch (e) {
         if (config.errorLog === 'true') {
             screenshot.save(await page.screenshot())
         }
+        
         console.error(e)
-
+        throw e
+    } finally {
         await page.close()
         await browser.close()
-        
-        throw e
     }
-
-    cookie.save(await page.cookies())
-    await page.close()
-    await browser.close()
 
     return new Promise((resolve) => {
         setListener(resolve)
