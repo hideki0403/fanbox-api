@@ -1,4 +1,7 @@
+import fs from 'fs'
+import path from 'path'
 import puppeteer from 'puppeteer'
+import appRootPath from 'app-root-path'
 import config from '@/config'
 import * as cookie from '@/capture/cookie'
 import * as screenshot from '@/capture/screenshot'
@@ -34,7 +37,9 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
     const browser = await puppeteer.launch({
         headless: config.headless === 'true' ? 'new' : false,
         slowMo: 50,
+        args: getExtensions().map((extension) => `--load-extension=${extension}`)
     })
+
     const page = await browser.newPage()
     await page.setRequestInterception(true);
 
@@ -93,4 +98,14 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
     return new Promise((resolve) => {
         setListener(resolve)
     })
+}
+
+function getExtensions() {
+    try {
+        const extensionPath = appRootPath.resolve('./extensions')
+        const files = fs.readdirSync(extensionPath, { withFileTypes: true })
+        return files.filter((file) => file.isDirectory()).map((file) => path.join(extensionPath, file.name))
+    } catch (e) {
+        return []
+    }
 }
