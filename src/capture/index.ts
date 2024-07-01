@@ -35,7 +35,7 @@ export async function get(type: keyof typeof ApiType): Promise<any> {
     }
 
     const browser = await puppeteer.launch({
-        headless: config.headless === 'true' ? 'new' : false,
+        headless: config.headless === 'true',
         slowMo: 50,
         args: getExtensions().map((extension) => `--load-extension=${extension}`)
     })
