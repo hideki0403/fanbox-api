@@ -3,7 +3,13 @@ pixiv:
   password: your_password
 
 cf_clearance: your_cf_clearance_cookie
+# 取得方法や詳細については以下のリンクを参照してください
+# https://github.com/hideki0403/fanbox-api/wiki/cf_clearance%E3%81%AB%E3%81%A4%E3%81%84%E3%81%A6
+
 user_agent: your_user_agent
+# cf_clearanceを取得した環境のUser-Agentを指定してください
+# 以下のサイトのHTTP_USER_AGENTから取得できます
+# https://testpage.jp/tool/ip_user_agent.php
 
 server:
   port: 3000
