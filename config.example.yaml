@@ -3,6 +3,7 @@ pixiv:
   password: your_password
 
 cf_clearance: your_cf_clearance_cookie
+user_agent: your_user_agent
 
 server:
   port: 3000
