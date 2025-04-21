@@ -13,7 +13,7 @@ export const ApiType = {
     },
     'plan': {
         pageUrl: 'https://www.fanbox.cc/manage/plans',
-        hookUrl: 'https://api.fanbox.cc/plan.listCreator?userId=',
+        hookUrl: 'https://api.fanbox.cc/plan.listCreator?creatorId=',
     },
 } as const
 
