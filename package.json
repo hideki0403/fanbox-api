@@ -2,7 +2,7 @@
 	"type": "module",
 	"scripts": {
 		"start": "node ./build/index.js",
-		"build": "pnpm clean && tsc -p tsconfig.json",
+		"build": "pnpm clean && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
 		"clean": "node ./scripts/clean.js",
 		"dev": "tsx watch src/index.ts"
 	},
@@ -19,6 +19,7 @@
 	"devDependencies": {
 		"@types/js-yaml": "^4.0.9",
 		"@types/node": "^26.1.1",
+		"tsc-alias": "^1.9.1",
 		"tsx": "^4.23.1",
 		"typescript": "^7.0.2"
 	},
