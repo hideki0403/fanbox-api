@@ -2,9 +2,9 @@ import fs from 'fs'
 import path from 'path'
 import puppeteer from 'puppeteer'
 import appRootPath from 'app-root-path'
-import config from '@/config'
-import * as cookie from '@/capture/cookie'
-import * as screenshot from '@/capture/screenshot'
+import config from '@/config.js'
+import * as cookie from '@/capture/cookie.js'
+import * as screenshot from '@/capture/screenshot.js'
 
 export const ApiType = {
     'relationship': {

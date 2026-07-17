@@ -1,4 +1,5 @@
 {
+	"type": "module",
 	"scripts": {
 		"start": "node ./build/index.js",
 		"build": "pnpm clean && tsc -p tsconfig.json",

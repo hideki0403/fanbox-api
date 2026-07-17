@@ -1,6 +1,6 @@
 import Fastify from 'fastify'
-import config from '@/config'
-import * as capture from '@/capture'
+import config from '@/config.js'
+import * as capture from '@/capture/index.js'
 
 export default async function () {
     const app = Fastify()
