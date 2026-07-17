@@ -1,10 +1,12 @@
 import Fastify from 'fastify'
+import * as Sentry from '@sentry/node'
 import config from '@/config.js'
 import { get } from '@/capture/fetch.js'
 import { ApiType } from '@/capture/def.js'
 
 export default async function () {
     const app = Fastify()
+    Sentry.setupFastifyErrorHandler(app);
 
     app.setErrorHandler((err, req, res) => {
         console.error(`RequestID: ${req.id},`, err)

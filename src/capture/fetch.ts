@@ -2,6 +2,7 @@ import fs from 'fs'
 import path from 'path'
 import puppeteer from 'puppeteer'
 import appRootPath from 'app-root-path'
+import * as Sentry from '@sentry/node'
 import config from '@/config.js'
 import * as cookie from '@/capture/cookie.js'
 import * as screenshot from '@/capture/screenshot.js'
@@ -10,19 +11,40 @@ import { z } from 'zod'
 
 export async function get<T extends keyof typeof ApiType>(type: T): Promise<z.infer<typeof ApiType[T]['schema']>> {
     let listener = null as null | ((e: any) => void)
+    let errorListener = null as null | ((e: any) => void)
     let result = null as null | any
+    let errorResult = null as null | Error
 
     const emit = (e: any) => {
-        const parsed = ApiType[type].schema.parse(e)
-        result = parsed
+        const parsed = ApiType[type].schema.safeParse(e)
+        if (!parsed.success) {
+            Sentry.withScope((scope) => {
+                scope.setTag('api_type', String(type))
+                scope.setExtra('raw_data', e)
+                scope.setExtra('zod_issues', parsed.error.issues)
+                Sentry.captureException(new Error(`Schema validation failed for API: ${String(type)}`))
+            })
+
+            errorResult = new Error(`Schema validation failed for API: ${String(type)}`)
+            if (errorListener) {
+                errorListener(errorResult)
+            }
+            return
+        }
+
+        result = parsed.data
         if (listener) {
-            listener(parsed)
+            listener(parsed.data)
         }
     }
-    const setListener = (fn: (e: any) => void) => {
-        listener = fn
-        if (result) {
-            fn(result)
+
+    const setListener = (resolveFn: (e: any) => void, rejectFn: (e: any) => void) => {
+        listener = resolveFn
+        errorListener = rejectFn
+        if (errorResult) {
+            rejectFn(errorResult)
+        } else if (result) {
+            resolveFn(result)
         }
     }
 
@@ -102,6 +124,7 @@ export async function get<T extends keyof typeof ApiType>(type: T): Promise<z.in
             screenshot.save(await page.screenshot())
         }
 
+        Sentry.captureException(e)
         console.error(e)
         throw e
     } finally {
@@ -109,8 +132,8 @@ export async function get<T extends keyof typeof ApiType>(type: T): Promise<z.in
         await browser.close()
     }
 
-    return new Promise((resolve) => {
-        setListener(resolve)
+    return new Promise((resolve, reject) => {
+        setListener(resolve, reject)
     })
 }
 

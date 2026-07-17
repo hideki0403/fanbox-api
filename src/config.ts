@@ -17,6 +17,11 @@ const fallbackConfig = {
     user_agent: '',
     headless: 'true',
     errorLog: 'false',
+    sentry: {
+        dsn: '',
+        tracesSampleRate: 0,
+        profilesSampleRate: 0,
+    },
 }
 
 export default deepmerge(fallbackConfig, config)
