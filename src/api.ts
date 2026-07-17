@@ -1,6 +1,7 @@
 import Fastify from 'fastify'
 import config from '@/config.js'
-import * as capture from '@/capture/index.js'
+import { get } from '@/capture/fetch.js'
+import { ApiType } from '@/capture/def.js'
 
 export default async function () {
     const app = Fastify()
@@ -10,11 +11,27 @@ export default async function () {
         res.status(500).send(`Internal Server Error (RequestID: ${req.id})`)
     })
 
-    app.get('/api/:type', async (req, res) => {
-        const type = (req.params as any).type as keyof typeof capture.ApiType
-        if (!Object.keys(capture.ApiType).includes(type)) return res.status(400).send('Bad Request')
+    app.get('/api/users', async (_, res) => {
+        const planData = (await get('plan')).body.plans
+        const userData = (await get('relationship')).body
 
-        const data = await capture.get(type)
+        const planMap = new Map(planData.map(p => [p.id, p.fee]))
+        const merged = {} as Record<string, number>
+
+        for (const x of userData) {
+            const fee = planMap.get(x.planId)
+            if (fee == null) continue
+            merged[x.user.userId] = fee
+        }
+
+        res.send(merged)
+    })
+
+    app.get('/api/:type', async (req, res) => {
+        const type = (req.params as any).type as keyof typeof ApiType
+        if (!Object.keys(ApiType).includes(type)) return res.status(400).send('Bad Request')
+
+        const data = await get(type)
         res.send(data)
     })
 

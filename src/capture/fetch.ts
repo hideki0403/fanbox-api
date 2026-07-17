@@ -5,26 +5,18 @@ import appRootPath from 'app-root-path'
 import config from '@/config.js'
 import * as cookie from '@/capture/cookie.js'
 import * as screenshot from '@/capture/screenshot.js'
+import { ApiType } from '@/capture/def.js'
+import { z } from 'zod'
 
-export const ApiType = {
-    'relationship': {
-        pageUrl: 'https://www.fanbox.cc/manage/relationships',
-        hookUrl: 'https://api.fanbox.cc/relationship.listFans?status=supporter',
-    },
-    'plan': {
-        pageUrl: 'https://www.fanbox.cc/manage/plans',
-        hookUrl: 'https://api.fanbox.cc/plan.listCreator?creatorId=',
-    },
-} as const
-
-export async function get(type: keyof typeof ApiType): Promise<any> {
+export async function get<T extends keyof typeof ApiType>(type: T): Promise<z.infer<typeof ApiType[T]['schema']>> {
     let listener = null as null | ((e: any) => void)
     let result = null as null | any
 
     const emit = (e: any) => {
-        result = e
+        const parsed = ApiType[type].schema.parse(e)
+        result = parsed
         if (listener) {
-            listener(e)
+            listener(parsed)
         }
     }
     const setListener = (fn: (e: any) => void) => {
