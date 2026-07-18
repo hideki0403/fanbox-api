@@ -2,7 +2,7 @@ import fs from 'node:fs'
 import path from 'node:path'
 import * as Sentry from '@sentry/node'
 import appRootPath from 'app-root-path'
-import puppeteer from 'puppeteer'
+import puppeteer from 'rebrowser-puppeteer'
 import type { z } from 'zod'
 import * as cookie from '@/capture/cookie.js'
 import { ApiType } from '@/capture/def.js'
@@ -65,18 +65,18 @@ export async function get<T extends keyof typeof ApiType>(type: T): Promise<ApiR
 		args: browserArgs,
 	})
 
+	const cookies = cookie.load()
+	if (cookies) {
+		await browser.setCookie(...cookies)
+	}
+
 	const page = await browser.newPage()
 	await page.setRequestInterception(true)
 	await page.setUserAgent(config.user_agent)
 
-	const cookies = cookie.load()
-	if (cookies) {
-		await page.setCookie(...cookies)
-	}
-
-	const cfClearance = cookies?.find((c) => c.name === 'cf_clearance')
-	if (!cfClearance || cfClearance.value !== config.cf_clearance) {
-		await page.setCookie({
+	const cfClearance = cookies?.find((c) => c.domain === '.fanbox.cc' && c.name === 'cf_clearance')
+	if (cfClearance == null || cfClearance.value !== config.cf_clearance) {
+		await browser.setCookie({
 			name: 'cf_clearance',
 			value: config.cf_clearance,
 			domain: '.fanbox.cc',
@@ -121,7 +121,7 @@ export async function get<T extends keyof typeof ApiType>(type: T): Promise<ApiR
 			throw new Error('Captcha detected. Please check your cf_clearance.')
 		}
 
-		cookie.save(await page.cookies())
+		cookie.save(await browser.cookies())
 	} catch (e) {
 		if (config.errorLog === 'true') {
 			screenshot.save(await page.screenshot())
