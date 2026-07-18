@@ -2,3 +2,4 @@ allowBuilds:
   '@sentry/node-cpu-profiler': true
   esbuild: true
   puppeteer: true
+  rebrowser-puppeteer: true
