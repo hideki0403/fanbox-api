@@ -1,4 +1,4 @@
 {
-    "name": "fanbox-api",
-    "script": "build/index.js"
+	"name": "fanbox-api",
+	"script": "build/index.js"
 }

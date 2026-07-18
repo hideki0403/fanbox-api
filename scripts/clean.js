@@ -1,5 +1,5 @@
-import fs from 'fs'
+import fs from 'node:fs'
 
 if (fs.existsSync('build')) {
-    fs.rmSync('build', { recursive: true })
+	fs.rmSync('build', { recursive: true })
 }
