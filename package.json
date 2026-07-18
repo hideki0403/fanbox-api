@@ -4,7 +4,8 @@
 		"start": "node ./build/index.js",
 		"build": "pnpm clean && tsc -p tsconfig.json && tsc-alias -p tsconfig.json",
 		"clean": "node ./scripts/clean.js",
-		"dev": "tsx watch src/index.ts"
+		"dev": "tsx watch src/index.ts",
+		"lint": "biome check --fix"
 	},
 	"dependencies": {
 		"@sentry/node": "^10.65.0",
@@ -17,6 +18,7 @@
 		"zod": "^4.4.3"
 	},
 	"devDependencies": {
+		"@biomejs/biome": "^2.5.4",
 		"@types/js-yaml": "^4.0.9",
 		"@types/node": "^26.1.1",
 		"tsc-alias": "^1.9.1",
