@@ -20,8 +20,8 @@ const fallbackConfig = {
 	errorLog: 'false',
 	sentry: {
 		dsn: '',
-		tracesSampleRate: 0,
-		profilesSampleRate: 0,
+		tracesSampleRate: '0',
+		profilesSampleRate: '0',
 	},
 }
 

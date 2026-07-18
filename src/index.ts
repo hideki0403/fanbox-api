@@ -6,8 +6,8 @@ import config from '@/config.js'
 if (config.sentry.dsn) {
 	Sentry.init({
 		dsn: config.sentry.dsn,
-		tracesSampleRate: config.sentry.tracesSampleRate,
-		profilesSampleRate: config.sentry.profilesSampleRate,
+		tracesSampleRate: Number(config.sentry.tracesSampleRate),
+		profilesSampleRate: Number(config.sentry.profilesSampleRate),
 		integrations: [nodeProfilingIntegration()],
 	})
 }
